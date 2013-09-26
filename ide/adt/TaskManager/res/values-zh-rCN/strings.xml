@@ -1,0 +1,9 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+
+    <string name="app_name">任务管理器</string>
+    <string name="action_settings">配置</string>
+    <string name="kill_process">关闭</string>
+    <string name="kill_all_process">关闭所有</string>
+
+</resources>
