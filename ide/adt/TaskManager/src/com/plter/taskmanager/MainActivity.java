@@ -3,6 +3,7 @@ package com.plter.taskmanager;
 import java.util.List;
 
 import android.app.ActivityManager;
+import android.app.AlertDialog;
 import android.app.ActivityManager.RunningAppProcessInfo;
 import android.app.ListActivity;
 import android.content.Context;
@@ -10,6 +11,8 @@ import android.content.pm.ApplicationInfo;
 import android.content.pm.PackageManager;
 import android.content.pm.PackageManager.NameNotFoundException;
 import android.os.Bundle;
+import android.view.Menu;
+import android.view.MenuItem;
 import android.view.View;
 import android.view.View.OnClickListener;
 
@@ -63,12 +66,23 @@ public class MainActivity extends ListActivity {
     }
 
 
-//    @Override
-//    public boolean onCreateOptionsMenu(Menu menu) {
-//        // Inflate the menu; this adds items to the action bar if it is present.
-//        getMenuInflater().inflate(R.menu.main, menu);
-//        return true;
-//    }
+    @Override
+    public boolean onCreateOptionsMenu(Menu menu) {
+        getMenuInflater().inflate(R.menu.main, menu);
+        return true;
+    }
+    
+    @Override
+    public boolean onOptionsItemSelected(MenuItem item) {
+    	
+    	switch (item.getItemId()) {
+		case R.id.action_about:
+			new AlertDialog.Builder(this).setTitle(R.string.action_about).setMessage(R.string.action_about_content).setPositiveButton(R.string.close, null).show();
+			break;
+		}
+    	
+    	return super.onOptionsItemSelected(item);
+    }
     
     private ActivityManager am;
 	private TaskListAdapter adapter = null;

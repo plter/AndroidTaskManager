@@ -12,5 +12,6 @@
 8. 关闭正在运行的进程
 9. 动画效果的用法
 10. 自定义ListActivity
+11. 使用菜单资源
 
 [作者博客 http://blog.plter.com](http://xtiqin.blog.163.com)
