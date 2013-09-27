@@ -16,31 +16,29 @@ import android.widget.ImageView;
 import android.widget.TextView;
 
 public class TaskListAdapter extends BaseAdapter {
-	
+
 	private OnClickListener btnKillClickHandler=new View.OnClickListener() {
 
 		@Override
 		public void onClick(View v) {
 			BtnKillAttachment attachment = (BtnKillAttachment) v.getTag();
-			attachment.getCell().startAnimation(new RemoveCellAnimWork(attachment.getCell(),TaskListAdapter.this,attachment.getTaskData()).getAnimation());
-			
-			getActivityManager().killBackgroundProcesses(attachment.getPackageName());
+			attachment.getCell().startAnimation(new RemoveCellAnimWork(getContext(),attachment.getCell(),TaskListAdapter.this,attachment.getTaskListCellData()).getAnimation());
 		}
 	};
 
 	public TaskListAdapter(ActivityManager activityManager,Context context) {
 		this.context = context;
-		tasks = new ArrayList<TaskData>();
+		tasks = new ArrayList<TaskListCellData>();
 		this.activityManager = activityManager;
 		packageManager = context.getPackageManager();
 	}
-	
-	
+
+
 	public void killAll(){
-		for (TaskData data : tasks) {
-			getActivityManager().killBackgroundProcesses(data.getPackageName());
+		for (TaskListCellData data : tasks) {
+			data.killThisTask();
 		}
-		
+
 		//kill self
 		System.exit(0);
 	}
@@ -52,11 +50,11 @@ public class TaskListAdapter extends BaseAdapter {
 	}
 
 	@Override
-	public TaskData getItem(int arg0) {
+	public TaskListCellData getItem(int arg0) {
 		return tasks.get(arg0);
 	}
-	
-	public void remove(TaskData data){
+
+	public void remove(TaskListCellData data){
 		tasks.remove(data);
 	}
 
@@ -65,7 +63,7 @@ public class TaskListAdapter extends BaseAdapter {
 		return arg0;
 	}
 
-	public void addTaskData(TaskData data){
+	public void addTaskData(TaskListCellData data){
 		tasks.add(data);
 	}
 
@@ -81,37 +79,54 @@ public class TaskListAdapter extends BaseAdapter {
 
 		if (arg1==null) {
 			arg1 = LayoutInflater.from(getContext()).inflate(R.layout.task_list_cell, null);
-			holder = new TaskListCellHolder(arg1,(TextView)arg1.findViewById(R.id.tvLabel), (ImageView)arg1.findViewById(R.id.ivIcon), (Button)arg1.findViewById(R.id.btnKill));
+			holder = new TaskListCellHolder(arg1,
+					arg1.findViewById(R.id.taskDataContainer),
+					arg1.findViewById(R.id.gapTitleContainer),
+					(TextView)arg1.findViewById(R.id.tvLabel),
+					(TextView)arg1.findViewById(R.id.tvPackageName),
+					(ImageView)arg1.findViewById(R.id.ivIcon), 
+					(Button)arg1.findViewById(R.id.btnKill),
+					(TextView)arg1.findViewById(R.id.tvGaptitle)
+					);
 			arg1.setTag(holder);
 		}else{
 			holder = (TaskListCellHolder) arg1.getTag();
 		}
 
-		TaskData data = getItem(arg0);
-		holder.getTvLabel().setText(data.getLabel());
-		holder.getIvIcon().setImageDrawable(data.getIcon());
 
-		BtnKillAttachment attachment = null;
-		if (holder.getBtnKill().getTag()!=null) {
-			attachment = (BtnKillAttachment) holder.getBtnKill().getTag();
+		TaskListCellData data = getItem(arg0);
+		if (!data.isGap()) {
+			holder.showTaskDataContainer();
+			
+			holder.getTvLabel().setText(data.getLabel());
+			holder.getIvIcon().setImageDrawable(data.getIcon());
+			holder.getTvProcessName().setText(data.getProcessName());
+
+			BtnKillAttachment attachment = null;
+			if (holder.getBtnKill().getTag()!=null) {
+				attachment = (BtnKillAttachment) holder.getBtnKill().getTag();
+			}else{
+				attachment = new BtnKillAttachment();
+				holder.getBtnKill().setTag(attachment);
+				holder.getBtnKill().setOnClickListener(btnKillClickHandler);
+			}
+
+			//attach current data
+			attachment.setCell(arg1);
+			attachment.setTaskData(data);
 		}else{
-			attachment = new BtnKillAttachment();
-			holder.getBtnKill().setTag(attachment);
-			holder.getBtnKill().setOnClickListener(btnKillClickHandler);
+			holder.showGapTitleContainer();
+			
+			holder.getTvGapTitle().setText(data.getLabel());
 		}
-		
-		//attach current data
-		attachment.setCell(arg1);
-		attachment.setPackageName(data.getPackageName());
-		attachment.setTaskData(data);
-		
+
 		return arg1;
 	}
 
 	public Context getContext() {
 		return context;
 	}
-	
+
 	public PackageManager getPackageManager() {
 		return packageManager;
 	}
@@ -119,8 +134,8 @@ public class TaskListAdapter extends BaseAdapter {
 	public ActivityManager getActivityManager() {
 		return activityManager;
 	}
-	
-	private List<TaskData> tasks = null;
+
+	private List<TaskListCellData> tasks = null;
 	private Context context = null;
 	private PackageManager packageManager = null;
 	private ActivityManager activityManager = null;

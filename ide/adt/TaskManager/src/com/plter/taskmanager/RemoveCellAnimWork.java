@@ -1,5 +1,6 @@
 package com.plter.taskmanager;
 
+import android.content.Context;
 import android.view.View;
 import android.view.animation.Animation;
 import android.view.animation.Animation.AnimationListener;
@@ -19,21 +20,20 @@ public class RemoveCellAnimWork {
 		
 		@Override
 		public void onAnimationEnd(Animation animation) {
-			
-			getTaskListAdapter().remove(getTaskData());
+			getTaskListAdapter().remove(getTaskListCellData());
 			getTaskListAdapter().notifyDataSetChanged();
 			
-			if (getTaskData().getPackageName().equals(getTaskListAdapter().getContext().getPackageName())) {
-				System.exit(0);
-			}
+			getTaskListCellData().killThisTask();
+			getTaskListCellData().checkToExit();
 		}
 	};
 	
 	
-	public RemoveCellAnimWork(View cell,TaskListAdapter adapter,TaskData data) {
+	public RemoveCellAnimWork(Context context, View cell,TaskListAdapter adapter,TaskListCellData data) {
 		this.cell = cell;
 		taskListAdapter = adapter;
 		taskData = data;
+		this.context = context;
 		
 		animation = new TranslateAnimation(Animation.RELATIVE_TO_SELF, 0, Animation.RELATIVE_TO_SELF, -1, Animation.RELATIVE_TO_SELF, 0, Animation.RELATIVE_TO_SELF, 0);
 		animation.setDuration(300);
@@ -52,12 +52,17 @@ public class RemoveCellAnimWork {
 		return taskListAdapter;
 	}
 	
-	public TaskData getTaskData() {
+	public TaskListCellData getTaskListCellData() {
 		return taskData;
+	}
+	
+	public Context getContext() {
+		return context;
 	}
 	
 	private View cell;
 	private Animation animation = null;
 	private TaskListAdapter taskListAdapter = null;
-	private TaskData taskData = null;
+	private TaskListCellData taskData = null;
+	private Context context = null;
 }

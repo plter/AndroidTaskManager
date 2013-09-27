@@ -15,23 +15,15 @@ public class BtnKillAttachment {
 		this.cell = cell;
 	}
 	
-	public String getPackageName() {
-		return packageName;
-	}
 	
-	public void setPackageName(String packageName) {
-		this.packageName = packageName;
-	}
-	
-	public void setTaskData(TaskData taskData) {
+	public void setTaskData(TaskListCellData taskData) {
 		this.taskData = taskData;
 	}
 	
-	public TaskData getTaskData() {
+	public TaskListCellData getTaskListCellData() {
 		return taskData;
 	}
 	
-	private TaskData taskData;
+	private TaskListCellData taskData;
 	private View cell;
-	private String packageName;
 }

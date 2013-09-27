@@ -3,8 +3,9 @@ package com.plter.taskmanager;
 import java.util.List;
 
 import android.app.ActivityManager;
-import android.app.AlertDialog;
 import android.app.ActivityManager.RunningAppProcessInfo;
+import android.app.ActivityManager.RunningServiceInfo;
+import android.app.AlertDialog;
 import android.app.ListActivity;
 import android.content.Context;
 import android.content.pm.ApplicationInfo;
@@ -51,13 +52,39 @@ public class MainActivity extends ListActivity {
     	
     	adapter.clear();
     	
-    	List<RunningAppProcessInfo> processes = am.getRunningAppProcesses();
+    	ApplicationInfo appInfo ;
     	
+    	adapter.addTaskData(new Gap(this, getResources().getString(R.string.running_apps), null));
+    	
+    	List<RunningAppProcessInfo> processes = am.getRunningAppProcesses();
     	for (RunningAppProcessInfo runningAppProcessInfo : processes) {
     		try {
-				ApplicationInfo appInfo = packageManager.getApplicationInfo(runningAppProcessInfo.processName, PackageManager.GET_META_DATA);
-				adapter.addTaskData(new TaskData(runningAppProcessInfo.processName, packageManager.getApplicationLabel(appInfo).toString(),packageManager.getApplicationIcon(appInfo)));
+				appInfo = packageManager.getApplicationInfo(runningAppProcessInfo.processName, PackageManager.GET_META_DATA);
+				
+				adapter.addTaskData(new ActivityData(
+						this,
+						am, 
+						runningAppProcessInfo.processName, 
+						packageManager.getApplicationLabel(appInfo).toString(), 
+						packageManager.getApplicationIcon(appInfo)
+						));
     		} catch (NameNotFoundException e) {
+			}
+		}
+    	
+    	List<RunningServiceInfo> services = am.getRunningServices(100);
+    	adapter.addTaskData(new Gap(this,getResources().getString(R.string.running_services) , null));
+    	for (RunningServiceInfo runningServiceInfo : services) {
+			try {
+				appInfo = packageManager.getApplicationInfo(runningServiceInfo.service.getPackageName(), PackageManager.GET_META_DATA);
+				adapter.addTaskData(new ServiceData(
+						this, 
+						runningServiceInfo.process,
+						runningServiceInfo.service, 
+						packageManager.getApplicationLabel(appInfo).toString(), 
+						packageManager.getApplicationIcon(appInfo)
+						));
+			} catch (NameNotFoundException e) {
 			}
 		}
     	

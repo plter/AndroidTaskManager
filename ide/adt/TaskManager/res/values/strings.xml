@@ -7,4 +7,6 @@
     <string name="kill_all_process">Kill all</string>
 	<string name="action_about_content">Author:plter\nWebsite:plter.com</string>
 	<string name="close">Close</string>
+	<string name="running_apps">Running applications</string>
+	<string name="running_services">Running services</string>
 </resources>

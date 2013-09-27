@@ -7,4 +7,6 @@
     <string name="kill_all_process">关闭所有</string>
 	<string name="action_about_content">作者：梦宇\n网站：plter.com</string>
 	<string name="close">关闭</string>
+	<string name="running_apps">运行中的程序</string>
+	<string name="running_services">运行中的服务</string>
 </resources>
